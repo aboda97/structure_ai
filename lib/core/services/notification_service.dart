@@ -1,25 +1,37 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+// ============================================================
+// Push-notification abstraction.
+//
+// The interface (NotificationService) is what feature code depends on. The
+// real implementation (FirebaseNotificationService) wraps Firebase
+// Messaging. Because features only know the interface, we can swap the
+// implementation or fake it in tests without touching feature code.
+// ============================================================
+
+/// Contract for everything notification-related the app needs.
 abstract interface class NotificationService {
-  /// Initialize Firebase Messaging
+  /// Initialize Firebase Messaging.
   Future<void> initialize();
 
-  /// Request notification permission
+  /// Ask the user for permission to show notifications.
   Future<NotificationSettings> requestPermission();
 
-  /// Current FCM Token
+  /// The device's push-notification token (sent to our backend so it can
+  /// target this device).
   Future<String?> getDeviceToken();
 
-  /// Called when token changes
+  /// Stream that emits a NEW token whenever the old one is rotated.
   Stream<String> onTokenRefresh();
 
-  /// Foreground notifications
+  /// Stream of notifications received while the app is in the foreground.
   Stream<RemoteMessage> onForegroundMessage();
 
-  /// User taps notification
+  /// Stream of notifications the USER TAPPED to open the app.
   Stream<RemoteMessage> onMessageOpenedApp();
 }
 
+/// Real implementation backed by Firebase Messaging.
 final class FirebaseNotificationService implements NotificationService {
   final FirebaseMessaging messaging;
 

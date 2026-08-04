@@ -1,6 +1,22 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+// ============================================================
+// Simple key/value storage abstraction for NON-sensitive data (theme
+// choice, locale, "onboarding seen" flag, ...).
+//
+// Backed by shared_preferences (like localStorage on the web). Fast and
+// simple — but NOT encrypted, so never store tokens here.
+//
+// The interface lets us swap the backend or use an in-memory fake in
+// tests. Values are cached in memory by the plugin, so getters return
+// instantly.
+// ============================================================
+
+/// Contract for non-sensitive key/value storage.
 abstract interface class SharedPrefService {
+  // Save methods return a Future<bool> that tells whether the write
+  // succeeded (true) or failed (false).
+
   Future<bool> saveString(String key, String value);
 
   String? getString(String key);
@@ -17,11 +33,14 @@ abstract interface class SharedPrefService {
 
   double? getDouble(String key);
 
+  /// Remove a single key.
   Future<bool> remove(String key);
 
+  /// Remove ALL keys (logout/reset).
   Future<bool> clear();
 }
 
+/// Real implementation over shared_preferences.
 final class SharedPrefServiceImpl implements SharedPrefService {
   final SharedPreferences _prefs;
 

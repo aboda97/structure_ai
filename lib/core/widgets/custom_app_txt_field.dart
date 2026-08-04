@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
 
+// ============================================================
+// Reusable text input that wraps TextFormField.
+//
+// It exposes only the properties we actually use (label, hint, validator,
+// icons, keyboard type, ...) so every input in the app looks and behaves
+// the same. It is the natural place to later add shared styling (e.g.
+// error text styling) for ALL inputs at once.
+// ============================================================
+
 class CustomAppTxtField extends StatelessWidget {
   const CustomAppTxtField({
     super.key,
